@@ -37,7 +37,7 @@ public class Actor {
 	//toString, hashCode, equals methods...
 	@Override
 	public String toString() {
-		return "actor [id=" + id + ", firstName=" + firstName + ", lastName=" + lastName + "]";
+		return "\n" + firstName + " " + lastName;
 	}
 	@Override
 	public int hashCode() {

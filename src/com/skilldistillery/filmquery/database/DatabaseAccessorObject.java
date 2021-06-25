@@ -130,5 +130,30 @@ public class DatabaseAccessorObject implements DatabaseAccessor {
 		
 		return actors;
 	}
+	
+	public List<Film> findFilmByKeyword(String keyword) {
+		List<Film> films = new ArrayList<>();
+		try {
+			Connection conn = DriverManager.getConnection(URL, user, pass);
+			
+			String sql = "SELECT * FROM film WHERE title LIKE ?";
+			
+			PreparedStatement stmt = conn.prepareStatement(sql);
+			stmt.setString(1, keyword);
+			ResultSet rs = stmt.executeQuery();
+			
+			while(rs.next()) {
+				int filmId = rs.getInt(1);
+				Film film = findFilmById(filmId);
+				films.add(film);
+			}
+			
+		}
+		catch(SQLException e) {
+			e.printStackTrace();
+		}
+		
+		return films;
+	}
 
 }
