@@ -15,94 +15,90 @@ public class FilmQueryApp {
 
 	public static void main(String[] args) throws SQLException {
 		FilmQueryApp app = new FilmQueryApp();
-		//app.test();
-		 app.launch();
-	}
-
-	private void test() throws SQLException {
-		// findFilmById
-		System.out.println("Find Film By ID: ");
-		Film film = db.findFilmById(1);
-		System.out.println(film);
-		System.out.println();
-
-		// findActorById
-		System.out.println("Find Actor By ID: ");
-		Actor actor = db.findActorById(1);
-		System.out.println(actor);
-		System.out.println();
-
-		// findActorsByFilmId
-		System.out.println("Find Actors By Film ID: ");
-		List<Actor> actors = db.findActorsByFilmId(2);
-		for (Actor actor2 : actors) {
-			System.out.println(actor2.toString());
-		}
+		app.launch();
+		//Verify program end.
+		System.out.println("Program ended.");
 	}
 
 	private void launch() {
 		Scanner input = new Scanner(System.in);
-
 		startUserInterface(input);
-
 		input.close();
 	}
 
 	private void startUserInterface(Scanner input) {
 		boolean looping = true;
-		int selection;
 		while (looping) {
-			while (true) {
-				System.out.println("What would you like to do?");
-
-				System.out.println("1. Look up film by its id");
-				System.out.println("2. Look up a film by a search keyword");
-				System.out.println("3. Exit the application");
-
-				System.out.print("Enter a selection: ");
-				selection = input.nextInt();
-				if (selection < 0 || selection > 3) {
-					System.out.println("Invalid input. Please try again");
-				} else
-					break;
-			}
-
-			switch (selection) {
+			// Display Menu Prompt and Execute Selected Method
+			switch (menu(input)) {
 			case 1:
-				Film film;
-				while(true) {
-				System.out.print("Enter film ID: ");
-				film = db.findFilmById(input.nextInt());
-				if(film == null) {
-					System.out.println("Input out of range. Please try again.");
-				}
-				else
-					break;
-				}
-				System.out.println("-------------");
-				System.out.println(film);
-				System.out.println("-------------");
-				System.out.println();
+				lookUpFilmById(input);
 				break;
 			case 2:
-				List<Film> films;
-				String keyword;
-				System.out.print("Enter film search keyword: ");
-				keyword = input.nextLine();
-				films = db.findFilmByKeyword("%"+keyword+"%");
-				for(Film film2 : films) {
-					System.out.println(film2);
-					System.out.println();
-				}
+				lookUpFilmByKeyword(input);
 				break;
 			case 3:
 				looping = false;
+				//Program ends after this line is executed
 				break;
 			default:
 			}
-
 		}
-		System.out.println("Program ended.");
+	}
+	
+	//Method to display menu and return user selection as an int
+	private int menu(Scanner input) {
+		int menuSelection;
+		while (true) {
+			System.out.println("+---------------------------------------+");
+			System.out.println("|                  Menu                 |");
+			System.out.println("+---------------------------------------+");
+			System.out.println("| 1. Look up film by its id             |");
+			System.out.println("| 2. Look up a film by a search keyword |");
+			System.out.println("| 3. Exit the application               |");
+			System.out.println("+---------------------------------------+");
+			System.out.print("+-> Enter a selection: ");
+			menuSelection = input.nextInt();
+
+			// Input Validation
+			if (menuSelection < 1 || menuSelection > 3) {
+				System.out.println("Invalid input. Please try again");
+			}
+			else
+				break;
+		}
+		return menuSelection;
+	}
+	
+	private void lookUpFilmById(Scanner input) {
+		Film film;
+		while (true) {
+			System.out.print("Enter film ID: ");
+			film = db.findFilmById(input.nextInt());
+			//Input Validation
+			if (film == null) {
+				System.out.println("Input out of range. Please try again.");
+			} 
+			else
+				break;
+		}
+		System.out.println(film);
+		System.out.println();
+	}
+	
+	private void lookUpFilmByKeyword(Scanner input) {
+		List<Film> films;
+		String keyword;
+		System.out.print("Enter film search keyword: ");
+		keyword = input.next();
+		films = db.findFilmByKeyword("%" + keyword + "%");
+		if(films.size() == 0) {
+			System.out.println("\nNo results found.\n");
+		}
+		for (Film film : films) {
+			System.out.println(film);
+			System.out.println();
+		}
 	}
 
 }

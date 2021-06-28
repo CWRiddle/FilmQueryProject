@@ -1,18 +1,12 @@
 package com.skilldistillery.filmquery.entities;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class Film {
 
-	public static final String URL = "jdbc:mysql://localhost:3306/sdvid?useSSL=false";
-	private String user = "student";
-	private String pass = "student";
-	
 	// Fields
 	private int id;
 	private String title;
@@ -27,11 +21,15 @@ public class Film {
 	private String specialFeatures;
 	private List<Actor> cast;
 	private String language;
+	private String category;
+	//toStringHelper Fields
+	Map<Integer, String> fdo = new HashMap<>();
+	Map<String, Integer> fsl = new HashMap<>();
 
 	// Constructors
 	public Film(int id, String title, String description, int releaseYear, int languageId, int rentalDuration,
 			double rentalRate, int length, double replacementCost, String rating, String specialFeatures,
-			List<Actor> cast) {
+			List<Actor> cast, String language, String category) {
 		super();
 		this.id = id;
 		this.title = title;
@@ -45,31 +43,9 @@ public class Film {
 		this.rating = rating;
 		this.specialFeatures = specialFeatures;
 		this.cast = cast;
-		this.language = languageToString();
-	}
-
-	private String languageToString() {
-		String language = "";
-		try {
-			Connection conn = DriverManager.getConnection(URL, user, pass);
-
-			String sql = "SELECT language.name "
-					+ "FROM language "
-					+ "JOIN film "
-					+ "ON ?=language.id";
-
-			PreparedStatement stmt = conn.prepareStatement(sql);
-			stmt.setInt(1, languageId);
-			ResultSet rs = stmt.executeQuery();
-			
-			if(rs.next()) {
-				language = rs.getString(1);
-			}
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-
-		return language;
+		this.language = language;
+		this.category=category;
+		toStringFormatHelper();
 	}
 
 	// Getters and Setters
@@ -172,12 +148,84 @@ public class Film {
 	// toString, hashCode, equals methods...
 	@Override
 	public String toString() {
-		return "TITLE: " + title 
-				+ "\nRELEASE YEAR: " + releaseYear 
-				+ "\nRATING: " + rating 
-				+ "\nDESCRIPTION: " + description 
-				+ "\nLANGUAGE: " + language
-				+ "\nCAST: " + cast;
+		int nRows = 7;
+		
+		//Populate Dashed and Spaced Lines using appropriate lengths
+		StringBuilder dynamicDashedLine = new StringBuilder();
+		List<StringBuilder> dynamicSpacedLine = new ArrayList<>();
+		
+		//Populate Dashed Line
+		for(int i=0; i<=this.description.length()+1; i++) {
+			dynamicDashedLine.append("-");
+		}
+		
+		//Populate Spaced Line
+		for(int i=0; i<nRows; i++) {
+			dynamicSpacedLine.add(new StringBuilder());
+			for(int j=0; j<description.length()-fsl.get(fdo.get(i)); j++) {
+				dynamicSpacedLine.get(i).append(" ");
+			}
+		}
+		
+		//Format Cast String
+		StringBuilder formattedFilmCast = new StringBuilder();
+		for(Actor actor : cast) {
+			formattedFilmCast.append("\n| - " + actor);
+		}
+		formattedFilmCast.append("\n+--------------");
+		
+		return "\n+-------------+" + dynamicDashedLine + "+" +
+			   "\n|TITLE:       | " + title + dynamicSpacedLine.get(0) + " |" +
+			   "\n+-------------+" + dynamicDashedLine + "+" +
+			   "\n|RELEASE YEAR:| " + releaseYear + dynamicSpacedLine.get(1) + " |" +
+			   "\n+-------------+" + dynamicDashedLine + "+" +
+			   "\n|RATING:      | " + rating +  dynamicSpacedLine.get(2) + " |" +
+			   "\n+-------------+" + dynamicDashedLine + "+" +
+			   "\n|CATEGORY:    | " + category + dynamicSpacedLine.get(3) + " |" +
+			   "\n+-------------+" + dynamicDashedLine + "+" +
+			   "\n|DESCRIPTION: | " + description + dynamicSpacedLine.get(4) + " |" +
+			   "\n+-------------+" + dynamicDashedLine + "+" +
+			   "\n|LANGUAGE:    | " + language +  dynamicSpacedLine.get(5) + " |" +
+			   "\n+-------------+" + dynamicDashedLine + "+" +
+			   "\n|CAST:        |" +
+			   "\n+-------------+" +
+			   formattedFilmCast;
+	}
+	
+	private void toStringFormatHelper() {
+		
+		//Map<String, Integer> fsl = new HashMap<>();
+		
+		fsl.put("id", String.valueOf(this.id).length());
+		fsl.put("title", this.title.length());
+		fsl.put("description", this.description.length());
+		fsl.put("releaseYear", String.valueOf(this.releaseYear).length());
+		fsl.put("languageId", String.valueOf(this.languageId).length());
+		fsl.put("rentalDuration", String.valueOf(this.rentalDuration).length());
+		fsl.put("rentalRate", String.valueOf(this.rentalRate).length());
+		fsl.put("length", String.valueOf(this.length).length());
+		fsl.put("replacementCost", String.valueOf(this.replacementCost).length());
+		fsl.put("rating", this.rating.length());
+		fsl.put("specialFeatures", this.specialFeatures.length());
+		fsl.put("language", this.language.length());
+		fsl.put("category", this.category.length());
+		
+		//Map<Integer, String> fdo = new HashMap<>();
+		
+		fdo.put(6, "id");
+		fdo.put(0, "title");
+		fdo.put(4, "description");
+		fdo.put(1, "releaseYear");
+		fdo.put(7, "languageId");
+		fdo.put(8, "rentalDuration");
+		fdo.put(9, "rentalRate");
+		fdo.put(10, "length");
+		fdo.put(11, "replacementCost");
+		fdo.put(2, "rating");
+		fdo.put(12, "specialFeatures");
+		fdo.put(5, "language");
+		fdo.put(3, "category");
+		
 	}
 
 //BACKUP TOSTRING METHOD

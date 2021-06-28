@@ -37,7 +37,7 @@ public class Actor {
 	//toString, hashCode, equals methods...
 	@Override
 	public String toString() {
-		return "\n" + firstName + " " + lastName;
+		return firstName + " " + lastName;
 	}
 	@Override
 	public int hashCode() {
