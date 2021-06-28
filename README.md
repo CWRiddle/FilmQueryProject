@@ -22,7 +22,7 @@ This program supports input validation.
 Compile and run in IDE or Terminal
 
 ### Lessons Learned
-I learned that there is such thing as a "TooManyConnections" exception in Java.
+* I learned that there is such thing as a "TooManyConnections" exception in Java/SQL.
 This error occurred when I tried to open additional connections to the mySQL database inside of the film class itself.
 In the end, my reason for doing so proved to be unnecessary as the solution the problem I was trying to tackle with the
 additional connections in the film class could have been resolved by being more specific with my SQL query statement.
