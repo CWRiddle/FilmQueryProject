@@ -136,7 +136,6 @@ public class DatabaseAccessorObject implements DatabaseAccessor {
 		catch(SQLException e) {
 			e.printStackTrace();
 		}
-		
 		return actors;
 	}
 	
@@ -145,10 +144,11 @@ public class DatabaseAccessorObject implements DatabaseAccessor {
 		try {
 			Connection conn = DriverManager.getConnection(URL, user, pass);
 			
-			String sql = "SELECT * FROM film WHERE title LIKE ?";
+			String sql = "SELECT * FROM film WHERE title LIKE ? OR description LIKE ?";
 			
 			PreparedStatement stmt = conn.prepareStatement(sql);
 			stmt.setString(1, keyword);
+			stmt.setString(2, keyword);
 			ResultSet rs = stmt.executeQuery();
 			
 			while(rs.next()) {
